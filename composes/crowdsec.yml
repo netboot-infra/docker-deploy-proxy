@@ -32,10 +32,6 @@ services:
       - $STORAGE_PATH/crowdsec/config:/etc/crowdsec/
       - $STORAGE_PATH/crowdsec/data:/var/lib/crowdsec/data/
       - $STORAGE_PATH/traefik/log:/var/log/traefik/:ro
-      - type: tmpfs
-        target: /var/lib/crowdsec/data/
-        tmpfs:
-          size: 524288000
     networks:
       - backend
     deploy:
