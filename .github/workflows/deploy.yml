@@ -49,6 +49,8 @@ jobs:
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst
 
       - name: Create Docker configs on remote Docker host
+        env:
+          DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
         run: |
           docker config rm acquis || true
           docker config create acquis configs/acquis.conf
