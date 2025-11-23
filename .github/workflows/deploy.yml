@@ -38,6 +38,13 @@ jobs:
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
         run: docker version
  
+      - name: Create Docker configs on remote Docker host
+        env:
+          DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
+        run: |
+          docker config rm acquis || true
+          docker config create acquis configs/acquis.yaml
+
       - name: Print stack configuration
         env:
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
@@ -47,13 +54,6 @@ jobs:
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst
-
-      - name: Create Docker configs on remote Docker host
-        env:
-          DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
-        run: |
-          docker config rm acquis || true
-          docker config create acquis configs/acquis.conf
 
       - name: Deploy stack to remote Docker host
         env:
