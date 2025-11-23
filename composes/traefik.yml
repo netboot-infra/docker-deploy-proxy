@@ -35,6 +35,8 @@ services:
       - --entrypoints.https.http.tls.domains[0].sans=*.$DOMAIN_NAME
       - --log=true
       - --log.level=INFO # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --log.filepath=/var/log/traefik.log
+      - --accesslog.filepath=/var/log/traefix-access.log
       - --providers.swarm=true
       - --providers.swarm.exposedByDefault=false
       - --providers.swarm.network=public
@@ -56,6 +58,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - $STORAGE_PATH/traefik/certs/:/certs
+      - $STORAGE_PATH/traefik/log:/var/log/
     environment:
       <<: *common-env
       CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN
