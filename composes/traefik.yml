@@ -10,6 +10,7 @@ x-common-deploy: &common-deploy
     window: 120s
 
 networks:
+  backend: {}
   public:
     external: true
 
@@ -46,6 +47,8 @@ services:
       - --certificatesResolvers.letsencrypt.acme.dnsChallenge.delayBeforeCheck=90
       - --experimental.plugins.sablier.moduleName=github.com/sablierapp/sablier-traefik-plugin
       - --experimental.plugins.sablier.version=v1.0.1
+      - --experimental.plugins.crowdsec-bouncer.modulename=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      - --experimental.plugins.crowdsec-bouncer.version=v1.4.6
     ports:
       - "80:80"
       - "443:443"
@@ -81,6 +84,7 @@ services:
     read_only: true
     networks:
       - public
+      - backend
     volumes:
       - type: tmpfs
         target: /tmp

@@ -10,6 +10,7 @@ x-common-deploy: &common-deploy
     window: 120s
 
 networks:
+  backend: {}
   public:
     external: true
 

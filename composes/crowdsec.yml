@@ -1,0 +1,57 @@
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+
+configs:
+  acquis-config:
+    content: |
+      filenames:
+        - /var/log/traefik/*
+      labels:
+        type:    traefik
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    environment:
+      <<: *common-env
+      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/http-dos"
+      CUSTOM_HOSTNAME: crowdsec
+    configs:
+      - source: acquis-config
+        target: /etc/crowdsec/acquis.yaml
+    volumes:
+      - $STORAGE_PATH/crowdsec/config:/etc/crowdsec/
+      - $STORAGE_PATH/crowdsec/data:/var/lib/crowdsec/data/
+      - $STORAGE_PATH/traefik/log:/var/log/traefik/:ro
+      - type: tmpfs
+        target: /var/lib/crowdsec/data/
+        tmpfs:
+          size: 524288000
+    networks:
+      - backend
+    deploy:
+      <<: *common-deploy
+
+  crowdsec-bouncer:
+    image: fbonalair/traefik-crowdsec-bouncer:latest
+    container_name: crowdsec-bouncer
+    environment:
+      <<: *common-env
+      CROWDSEC_BOUNCER_API_KEY: $CROWDSEC_BOUNCER_KEY_PLUGIN
+      CROWDSEC_AGENT_HOST: crowdsec:8080
+    networks:
+      - backend
+    deploy:
+      <<: *common-deploy
