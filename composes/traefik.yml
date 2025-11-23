@@ -87,7 +87,7 @@ services:
         # Catch-all router (matches all hosts)
         traefik.http.routers.error-router.rule: HostRegexp(`{host:.+}`)
         traefik.http.routers.error-router.priority: 1
-        traefik.http.routers.error-router.entrypoints: webinsecure
+        traefik.http.routers.error-router.entrypoints: https
         traefik.http.routers.error-router.middlewares: error-pages-middleware
         # Error-page middleware
         traefik.http.middlewares.error-pages-middleware.errors.status: 400-599
