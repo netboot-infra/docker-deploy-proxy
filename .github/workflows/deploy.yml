@@ -40,6 +40,8 @@ jobs:
  
       - name: Deploy stack to remote Docker host
         env:
+          DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+          STORAGE_PATH: ${{ vars.STORAGE_PATH }}
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst | docker stack deploy --compose-file - core
