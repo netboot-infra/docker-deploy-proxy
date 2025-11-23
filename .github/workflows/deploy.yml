@@ -38,7 +38,7 @@ jobs:
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
         run: docker version
  
-      - name: Deploy stack to remote Docker host
+      - name: Print stack configuration
         env:
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
           STORAGE_PATH: ${{ vars.STORAGE_PATH }}
@@ -46,4 +46,12 @@ jobs:
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst
+
+      - name: Deploy stack to remote Docker host
+        env:
+          DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+          STORAGE_PATH: ${{ vars.STORAGE_PATH }}
+          CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
+          DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
+        run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst | docker stack deploy --compose-file - core
