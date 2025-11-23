@@ -61,6 +61,13 @@ services:
       - public
     deploy:
       <<: *common-deploy
+      labels:
+        # Allow Traefik to process this container
+        traefik.enable: "true"
+        # Dashboard Router
+        traefik.http.routers.traefik.rule: Host(`traefik.$DOMIAN_NAME`)
+        traefik.http.routers.traefik.service: api@internal
+        traefik.http.routers.traefik.entrypoints: webinsecure
       resources:
         limits:
           cpus: '0.50'
