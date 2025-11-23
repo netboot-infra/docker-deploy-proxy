@@ -11,11 +11,7 @@ x-common-deploy: &common-deploy
 
 configs:
   acquis:
-    content: |
-      filenames:
-        - /var/log/traefik/*
-      labels:
-        type: traefik
+    external: true
 
 networks:
   backend: {}

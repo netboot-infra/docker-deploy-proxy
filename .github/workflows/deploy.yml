@@ -48,6 +48,11 @@ jobs:
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst
 
+      - name: Create Docker configs on remote Docker host
+        run: |
+          docker config rm acquis configs/acquis.conf
+          docker config create acquis configs/acquis.conf
+
       - name: Deploy stack to remote Docker host
         env:
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
