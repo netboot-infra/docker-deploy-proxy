@@ -55,7 +55,6 @@ services:
       - $STORAGE_PATH/traefik/certs/:/certs
     environment:
       <<: *common-env
-      DOMAINNAME: $DOMIAN_NAME
       CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN
     networks:
       - public
@@ -95,7 +94,7 @@ services:
         traefik.http.routers.error-router.rule: HostRegexp(`{host:.+}`)
         traefik.http.routers.error-router.priority: 1
         traefik.http.routers.error-router.entrypoints: https
-        traefik.http.routers.error-router.middlewares: error-pages-middleware
+        traefik.http.routers.error-router.middlewares: error-pages-middleware@swarm
         # Error-page middleware
         traefik.http.middlewares.error-pages-middleware.errors.status: 400-599
         traefik.http.middlewares.error-pages-middleware.errors.service: error-pages-service
