@@ -42,8 +42,12 @@ jobs:
         env:
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
         run: |
-          docker config rm acquis || true
-          docker config create acquis configs/acquis.yaml
+          if ! docker config inspect acquis >/dev/null 2>&1; then
+            docker config create acquis configs/acquis.yaml
+            echo "Docker config 'acquis' created."
+          else
+            echo "Docker config 'acquis' already exists. Skipping creation."
+          fi
 
       - name: Print stack configuration
         env:
