@@ -50,7 +50,7 @@ jobs:
 
       - name: Create Docker configs on remote Docker host
         run: |
-          docker config rm acquis configs/acquis.conf
+          docker config rm acquis || true
           docker config create acquis configs/acquis.conf
 
       - name: Deploy stack to remote Docker host
