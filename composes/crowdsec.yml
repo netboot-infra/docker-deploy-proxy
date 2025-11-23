@@ -10,12 +10,13 @@ x-common-deploy: &common-deploy
     window: 120s
 
 configs:
-  acquis-config:
+  acquis:
     content: |
       filenames:
         - /var/log/traefik/*
       labels:
-        type:    traefik
+        type: traefik
+
 networks:
   backend: {}
   public:
@@ -29,7 +30,7 @@ services:
       COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/http-dos"
       CUSTOM_HOSTNAME: crowdsec
     configs:
-      - source: acquis-config
+      - source: acquis
         target: /etc/crowdsec/acquis.yaml
     volumes:
       - $STORAGE_PATH/crowdsec/config:/etc/crowdsec/
