@@ -70,7 +70,7 @@ services:
           memory: 128M
 
   nginx_error:
-    build: .
+    image: ghcr.io/netboot-infra/traefik-error-pages:v1.0.0
     read_only: true
     networks:
       - public
