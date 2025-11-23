@@ -29,7 +29,7 @@ services:
         # Allow traefik to process this container
         - "traefik.enable=true"
         - "traefik.swarm.lbswarm=true"
-        - "traefik.http.routers.whoami.rule=Host(`whoami.$DOMIAN_NAME`)"
+        - "traefik.http.routers.whoami.rule=Host(`whoami.$DOMAIN_NAME`)"
         - "traefik.http.routers.whoami.entrypoints=https"
         - "traefik.http.routers.whoami.middlewares=sablier-whoami@swarm"
         - "traefik.http.services.whoami.loadbalancer.server.port=80"

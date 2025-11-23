@@ -30,8 +30,8 @@ services:
       - --entrypoints.https.address=:443
       - --entrypoints.https.forwardedHeaders.trustedIPs=127.0.0.1/32,10.0.0.0/8,192.168.0.0/16
       - --entrypoints.https.http.tls.certresolver=letsencrypt
-      - --entrypoints.https.http.tls.domains[0].main=$DOMIAN_NAME
-      - --entrypoints.https.http.tls.domains[0].sans=*.$DOMIAN_NAME
+      - --entrypoints.https.http.tls.domains[0].main=$DOMAIN_NAME
+      - --entrypoints.https.http.tls.domains[0].sans=*.$DOMAIN_NAME
       - --log=true
       - --log.level=INFO # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --providers.swarm=true
@@ -64,7 +64,7 @@ services:
         # Allow Traefik to process this container
         traefik.enable: "true"
         # Dashboard Router
-        traefik.http.routers.traefik.rule: Host(`traefik.$DOMIAN_NAME`)
+        traefik.http.routers.traefik.rule: Host(`traefik.$DOMAIN_NAME`)
         traefik.http.routers.traefik.service: api@internal
         traefik.http.routers.traefik.entrypoints: webinsecure
       resources:
