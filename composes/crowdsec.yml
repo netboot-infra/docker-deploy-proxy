@@ -39,7 +39,6 @@ services:
 
   crowdsec-bouncer:
     image: fbonalair/traefik-crowdsec-bouncer:latest
-    container_name: crowdsec-bouncer
     environment:
       <<: *common-env
       CROWDSEC_BOUNCER_API_KEY: $CROWDSEC_BOUNCER_KEY_PLUGIN
