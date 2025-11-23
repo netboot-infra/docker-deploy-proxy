@@ -99,7 +99,7 @@ services:
         # Allow traefik to process this container
         traefik.enable: "true"
         # Catch-all router (matches all hosts)
-        traefik.http.routers.error-router.rule: HostRegexp(`{host:.+}`)
+        traefik.http.routers.error-router.rule: HostRegexp(`^.+$`)
         traefik.http.routers.error-router.priority: 1
         traefik.http.routers.error-router.entrypoints: https
         traefik.http.routers.error-router.middlewares: error-pages-middleware@swarm
