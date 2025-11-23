@@ -1,0 +1,33 @@
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+
+networks:
+  public:
+    external: true
+
+services:
+  sablier:
+    image: sablierapp/sablier:1.10.4
+    command:
+      - start
+      - --provider.name=docker_swarm
+      - --sessions.default-duration=1m
+      - --strategy.dynamic.default-theme=ghost
+      - --strategy.dynamic.show-details-by-default=false
+      - --logging.level=debug
+    networks:
+      - public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      <<: *common-env
+    deploy:
+      <<: *common-deploy

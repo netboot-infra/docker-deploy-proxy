@@ -1,0 +1,98 @@
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+
+networks:
+  public:
+    external: true
+
+services:
+  traefik:
+    image: traefik:v3.6.2
+    command:
+      - --global.checkNewVersion=false
+      - --global.sendAnonymousUsage=false
+      - --api.dashboard=true
+      - --api.debug=true
+      - --api.disableDashboardAd=true
+      - --api.insecure=true
+      - --entrypoints.http.address=:80
+      - --entrypoints.http.http.redirections.entrypoint.to=https
+      - --entrypoints.http.http.redirections.entrypoint.scheme=https
+      - --entrypoints.http.http.redirections.entrypoint.permanent=true
+      - --entrypoints.https.address=:443
+      - --entrypoints.https.forwardedHeaders.trustedIPs=127.0.0.1/32,10.0.0.0/8,192.168.0.0/16
+      - --entrypoints.https.http.tls.certresolver=letsencrypt
+      - --entrypoints.https.http.tls.domains[0].main=$DOMIAN_NAME
+      - --entrypoints.https.http.tls.domains[0].sans=*.$DOMIAN_NAME
+      - --log=true
+      - --log.level=INFO # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --providers.swarm=true
+      - --providers.swarm.exposedByDefault=false
+      - --providers.swarm.network=public
+      - --providers.swarm.watch=true
+      - --providers.swarm.allowemptyservices=true
+      - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-v02.api.letsencrypt.org/directory
+      - --certificatesResolvers.letsencrypt.acme.storage=/certs/acme.json
+      - --certificatesResolvers.letsencrypt.acme.dnsChallenge.provider=cloudflare
+      - --certificatesResolvers.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+      - --certificatesResolvers.letsencrypt.acme.dnsChallenge.delayBeforeCheck=90
+      - --experimental.plugins.sablier.moduleName=github.com/sablierapp/sablier-traefik-plugin
+      - --experimental.plugins.sablier.version=v1.0.1
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - $STORAGE_PATH/traefik/certs/:/certs
+    environment:
+      <<: *common-env
+      DOMAINNAME: $DOMIAN_NAME
+      CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN
+    networks:
+      - public
+    deploy:
+      <<: *common-deploy
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  nginx_error:
+    build: .
+    read_only: true
+    networks:
+      - public
+    volumes:
+      - type: tmpfs
+        target: /tmp
+    environment:
+      <<: *common-env
+    deploy:
+      <<: [*common-deploy]
+      labels:
+        # Allow traefik to process this container
+        traefik.enable: "true"
+        # Catch-all router (matches all hosts)
+        traefik.http.routers.error-router.rule: HostRegexp(`{host:.+}`)
+        traefik.http.routers.error-router.priority: 1
+        traefik.http.routers.error-router.entrypoints: webinsecure
+        traefik.http.routers.error-router.middlewares: error-pages-middleware
+        # Error-page middleware
+        traefik.http.middlewares.error-pages-middleware.errors.status: 400-599
+        traefik.http.middlewares.error-pages-middleware.errors.service: error-pages-service
+        traefik.http.middlewares.error-pages-middleware.errors.query: "/{status}.html"
+        # Backend service for error pages
+        traefik.http.services.error-pages-service.loadbalancer.server.port: 80
+    

@@ -1,0 +1,38 @@
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+
+networks:
+  public:
+    external: true
+
+services:
+  whoami:
+    image: traefik/whoami:v1.11
+    networks:
+      - public
+    environment:
+      <<: *common-env
+    deploy:
+      <<: *common-deploy
+      labels:
+        # Allow sablier to process this container
+        - "sablier.enable=true"
+        - "sablier.group=whoami"
+        # Allow traefik to process this container
+        - "traefik.enable=true"
+        - "traefik.swarm.lbswarm=true"
+        - "traefik.http.routers.whoami.rule=Host(`whoami.$DOMIAN_NAME`)"
+        - "traefik.http.routers.whoami.entrypoints=https"
+        - "traefik.http.routers.whoami.middlewares=tinyauth,sablier-whoami@swarm"
+        - "traefik.http.services.whoami.loadbalancer.server.port=80"
+        - "traefik.http.middlewares.sablier-whoami.plugin.sablier.group=whoami"
+        - "traefik.http.middlewares.sablier-whoami.plugin.sablier.dynamic.displayName=Whoami"
+        - "traefik.http.middlewares.sablier-whoami.plugin.sablier.sessionDuration=15s"
