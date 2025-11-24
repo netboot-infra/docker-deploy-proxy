@@ -16,7 +16,7 @@ networks:
 
 services:
   authentik:
-    image: ghcr.io/goauthentik/server:2025.8.3
+    image: ghcr.io/goauthentik/server:2025.8.3@sha256:d4747a324d489d0436eb91cf02301d5a47bac455efad0e0ac56b3c193991067d
     networks:
       - public
       - backend
@@ -50,7 +50,7 @@ services:
         - "traefik.http.services.authentik.loadbalancer.server.port=9000"
 
   authentik-worker:
-    image: ghcr.io/goauthentik/server:2025.10.2
+    image: ghcr.io/goauthentik/server:2025.10.2@sha256:8322e449feefcc2416f0401038d5a1a28552c4403b079a59d3b4d978d8f3f530
     command: worker
     environment:
       <<: *common-env
@@ -71,7 +71,7 @@ services:
       <<: *common-deploy
 
   authentik-postgresql:
-    image: docker.io/library/postgres:16-alpine
+    image: docker.io/library/postgres:16-alpine@sha256:79c06d285ed9186efbbc45c73413b3c3510c3c94ffede2f25d1e523f74d07f28
     environment:
       <<: *common-env
       POSTGRES_DB: authentik
@@ -91,7 +91,7 @@ services:
       <<: *common-deploy
 
   authentik-redis:
-    image: redis:alpine
+    image: redis:alpine@sha256:6cbef353e480a8a6e7f10ec545f13d7d3fa85a212cdcc5ffaf5a1c818b9d3798
     command: --save 60 1 --loglevel warning
     environment:
       <<: *common-env
