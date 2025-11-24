@@ -55,6 +55,7 @@ jobs:
           STORAGE_PATH: ${{ vars.STORAGE_PATH }}
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
           CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
+          AUTHENTIK_TOKEN: ${{ secrets.AUTHENTIK_TOKEN }}
           AUTHENTIK_SECRET_KEY: ${{ secrets.AUTHENTIK_SECRET_KEY }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
@@ -68,6 +69,7 @@ jobs:
           STORAGE_PATH: ${{ vars.STORAGE_PATH }}
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
           CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
+          AUTHENTIK_TOKEN: ${{ secrets.AUTHENTIK_TOKEN }}
           AUTHENTIK_SECRET_KEY: ${{ secrets.AUTHENTIK_SECRET_KEY }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
