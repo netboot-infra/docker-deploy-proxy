@@ -71,7 +71,7 @@ services:
       <<: *common-deploy
       labels:
         traefik.enable: "true"
-        traefik.http.routers.authentik-proxy.rule: Host(`auth-proxy.$DOMAIN`) && PathPrefix(`/outpost.goauthentik.io/`)
+        traefik.http.routers.authentik-proxy.rule: Host(`login.$DOMAIN_NAME`)
         traefik.http.services.authentik-proxy.loadbalancer.server.port: 9000
         traefik.http.middlewares.auth.forwardauth.address: http://authentik-proxy:9000/outpost.goauthentik.io/auth/traefik
         traefik.http.middlewares.auth.forwardauth.trustForwardHeader: "true"
