@@ -31,4 +31,4 @@ services:
         - "traefik.swarm.lbswarm=true"
         - "traefik.http.routers.dozzle.rule=Host(`dozzle.$DOMAIN_NAME`)"
         - "traefik.http.routers.dozzle.entrypoints=https"
-        - "traefik.http.services.dozzle.loadbalancer.server.port=9998"
+        - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
