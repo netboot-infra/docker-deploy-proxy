@@ -17,7 +17,7 @@ networks:
 services:
   traefik:
     image: traefik:v3.6.2@sha256:aaf0f6185419a50c74651448c1a5bf4606bd2d2ddb7b8749eed505d55bf8b8ea
-    user: 1000
+    user: "1000:1000"
     command:
       - --global.checkNewVersion=false
       - --global.sendAnonymousUsage=false
@@ -85,7 +85,7 @@ services:
 
   nginx_error:
     image: ghcr.io/netboot-infra/traefik-error-pages:v1.0.3@sha256:dad0fe35a448d8838828108e2864f969989e6921e73983f6e433e8cec870c278
-    user: 1000
+    user: "1000:1000"
     read_only: true
     networks:
       - public
