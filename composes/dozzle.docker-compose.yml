@@ -16,7 +16,7 @@ networks:
 
 services:
   dozzle:
-    image: amir20/dozzle
+    image: amir20/dozzle@sha256:82773cc7e7443de8ba7f23bd175a80d79c9e4d4ff1c0a5f8701e04e6c5e383bc
     networks:
       - public
     volumes:
