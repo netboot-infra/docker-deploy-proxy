@@ -55,7 +55,7 @@ services:
         - "traefik.http.services.authentik.loadbalancer.server.port=9000"
 
   authentik-proxy:
-    image: ghcr.io/goauthentik/proxy:2025.10.2
+    image: ghcr.io/goauthentik/proxy:2025.10.2@sha256:8dae597dad1a323852eddbb820e92e4db0f6cd67dc345b12aeb8ae79b1b5b39d
     user: "1000:1000"
     environment:
       <<: *common-env
