@@ -5,7 +5,8 @@
         "docker:pinDigests",
         ":semanticCommitsDisabled",
         ":rebaseStalePrs",
-        ":disableRateLimiting"
+        ":disableRateLimiting",
+        ":disableDependencyDashboard"
     ],
     "timezone": "Europe/Paris",
     "docker-compose": {
