@@ -53,7 +53,11 @@ services:
         - "traefik.http.routers.authentik.rule=Host(`auth.$DOMAIN_NAME`)"
         - "traefik.http.routers.authentik.entrypoints=https"
         - "traefik.http.services.authentik.loadbalancer.server.port=9000"
-
+        # Traefik Middleware for container authentication
+        - "traefik.http.routers.authentik.middlewares=auth"
+        - "traefik.http.middlewares.auth.forwardauth.address=http://authentik:9000/outpost.goauthentik.io/auth/traefik"
+        - "traefik.http.middlewares.auth.forwardauth.authResponseHeaders=X-Forwarded-User"
+        - "traefik.http.middlewares.auth.forwardauth.trustForwardHeader=true"
   authentik-worker:
     image: ghcr.io/goauthentik/server:2025.10.2@sha256:8322e449feefcc2416f0401038d5a1a28552c4403b079a59d3b4d978d8f3f530
     command: worker
