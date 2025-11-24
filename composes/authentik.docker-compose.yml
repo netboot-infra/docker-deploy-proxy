@@ -60,8 +60,8 @@ services:
     environment:
       <<: *common-env
       AUTHENTIK_REDIS__HOST: authentik-redis
-      AUTHENTIK_HOST: http://authentik:9000
-      AUTHENTIK_INSECURE: "true"
+      AUTHENTIK_HOST: http://auth.$DOMAIN_NAME
+      AUTHENTIK_INSECURE: "false"
       AUTHENTIK_TOKEN: $AUTHENTIK_TOKEN
       AUTHENTIK_SECRET_KEY: $AUTHENTIK_SECRET_KEY
     networks:
@@ -71,7 +71,7 @@ services:
       <<: *common-deploy
       labels:
         traefik.enable: "true"
-        traefik.http.routers.authentik-proxy.rule: Host(`login.$DOMAIN_NAME`)
+        traefik.http.routers.authentik-proxy.rule: Host(`login.$DOMAIN_NAME`) && PathPrefix(`/outpost.goauthentik.io/`)
         traefik.http.services.authentik-proxy.loadbalancer.server.port: 9000
         traefik.http.middlewares.auth.forwardauth.address: http://authentik-proxy:9000/outpost.goauthentik.io/auth/traefik
         traefik.http.middlewares.auth.forwardauth.trustForwardHeader: "true"
