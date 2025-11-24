@@ -56,6 +56,8 @@ jobs:
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
           CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
           AUTHENTIK_SECRET_KEY: ${{ secrets.AUTHENTIK_SECRET_KEY }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst
@@ -67,6 +69,8 @@ jobs:
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
           CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
           AUTHENTIK_SECRET_KEY: ${{ secrets.AUTHENTIK_SECRET_KEY }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
           DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst | docker stack deploy --compose-file - core
