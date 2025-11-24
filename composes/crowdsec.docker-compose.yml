@@ -29,9 +29,9 @@ services:
       - source: acquis
         target: /etc/crowdsec/acquis.yaml
     volumes:
-      - $STORAGE_PATH/crowdsec/config:/etc/crowdsec/
-      - $STORAGE_PATH/crowdsec/data:/var/lib/crowdsec/data/
-      - $STORAGE_PATH/traefik/log:/var/log/traefik/:ro
+      - $STORAGE_PATH/core/crowdsec/config:/etc/crowdsec/
+      - $STORAGE_PATH/core/crowdsec/data:/var/lib/crowdsec/data/
+      - $STORAGE_PATH/core/traefik/log:/var/log/traefik/:ro
     networks:
       - backend
     deploy:

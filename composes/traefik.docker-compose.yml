@@ -57,8 +57,8 @@ services:
       - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - $STORAGE_PATH/traefik/certs/:/certs
-      - $STORAGE_PATH/traefik/log:/var/log/
+      - $STORAGE_PATH/core/traefik/certs/:/certs
+      - $STORAGE_PATH/core/traefik/log:/var/log/
     environment:
       <<: *common-env
       CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN
