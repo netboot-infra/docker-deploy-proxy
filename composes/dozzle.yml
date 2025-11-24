@@ -26,9 +26,15 @@ services:
     deploy:
       <<: *common-deploy
       labels:
+        # Homepage
+        - homepage.group="System Monitoring"
+        - homepage.name="Dozzle"
+        - homepage.icon="dozzle.png"
+        - homepage.href="https://log.$DOMAIN_NAME/"
+        - homepage.description="Real-time log viewer for Docker containers, providing an easy way to monitor application logs and troubleshoot issues."
         # Allow traefik to process this container
         - "traefik.enable=true"
         - "traefik.swarm.lbswarm=true"
-        - "traefik.http.routers.dozzle.rule=Host(`dozzle.$DOMAIN_NAME`)"
+        - "traefik.http.routers.dozzle.rule=Host(`log.$DOMAIN_NAME`)"
         - "traefik.http.routers.dozzle.entrypoints=https"
         - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
