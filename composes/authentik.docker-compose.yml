@@ -18,6 +18,7 @@ services:
   authentik:
     image: ghcr.io/goauthentik/server:2025.10.2@sha256:8322e449feefcc2416f0401038d5a1a28552c4403b079a59d3b4d978d8f3f530
     command: server
+    user: 1000
     networks:
       - public
       - backend
@@ -56,6 +57,7 @@ services:
   authentik-worker:
     image: ghcr.io/goauthentik/server:2025.10.2@sha256:8322e449feefcc2416f0401038d5a1a28552c4403b079a59d3b4d978d8f3f530
     command: worker
+    user: 1000
     environment:
       <<: *common-env
       AUTHENTIK_REDIS__HOST: authentik-redis
@@ -76,6 +78,7 @@ services:
 
   authentik-postgresql:
     image: docker.io/library/postgres:16-alpine@sha256:79c06d285ed9186efbbc45c73413b3c3510c3c94ffede2f25d1e523f74d07f28
+    user: 1000
     environment:
       <<: *common-env
       POSTGRES_DB: authentik
@@ -96,6 +99,7 @@ services:
 
   authentik-redis:
     image: redis:alpine@sha256:6cbef353e480a8a6e7f10ec545f13d7d3fa85a212cdcc5ffaf5a1c818b9d3798
+    user: 1000
     command: --save 60 1 --loglevel warning
     environment:
       <<: *common-env
