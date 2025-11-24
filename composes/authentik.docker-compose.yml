@@ -16,7 +16,7 @@ networks:
 
 services:
   authentik:
-    image: ghcr.io/goauthentik/server:2025.8.3@sha256:d4747a324d489d0436eb91cf02301d5a47bac455efad0e0ac56b3c193991067d
+    image: ghcr.io/goauthentik/server:2025.10.2@sha256:8322e449feefcc2416f0401038d5a1a28552c4403b079a59d3b4d978d8f3f530
     networks:
       - public
       - backend
@@ -27,6 +27,7 @@ services:
       AUTHENTIK_POSTGRESQL__USER: authentik
       AUTHENTIK_POSTGRESQL__NAME: authentik
       AUTHENTIK_POSTGRESQL__PASSWORD: authentik
+      AUTHENTIK_SECRET_KEY: $AUTHENTIK_SECRET_KEY
     volumes:
       - $STORAGE_PATH/core/authentik/media:/media
       - $STORAGE_PATH/core/authentik/templates:/templates
