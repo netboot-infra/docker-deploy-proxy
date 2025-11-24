@@ -59,11 +59,9 @@ services:
     user: "1000:1000"
     environment:
       <<: *common-env
-      AUTHENTIK_REDIS__HOST: authentik-redis
       AUTHENTIK_HOST: http://auth.$DOMAIN_NAME
       AUTHENTIK_INSECURE: "false"
       AUTHENTIK_TOKEN: $AUTHENTIK_TOKEN
-      AUTHENTIK_SECRET_KEY: $AUTHENTIK_SECRET_KEY
     networks:
       - public
       - backend
