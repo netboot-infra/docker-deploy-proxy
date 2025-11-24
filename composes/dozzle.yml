@@ -1,0 +1,34 @@
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  dozzle:
+    image: amir20/dozzle
+    networks:
+      - public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      <<: *common-env
+    deploy:
+      <<: *common-deploy
+      labels:
+        # Allow traefik to process this container
+        - "traefik.enable=true"
+        - "traefik.swarm.lbswarm=true"
+        - "traefik.http.routers.dozzle.rule=Host(`dozzle.$DOMAIN_NAME`)"
+        - "traefik.http.routers.dozzle.entrypoints=https"
+        - "traefik.http.services.dozzle.loadbalancer.server.port=9998"
