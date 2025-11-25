@@ -28,6 +28,8 @@ services:
       - --rc-pass=$SUDO_PASSWORD
       - --config=/config/rclone/rclone.conf
       - --cache-dir=/tmp/.cache/rclone
+    networks:
+      - public
     volumes:
       - $STORAGE_PATH:/docker:ro
       - $STORAGE_PATH/core/rclone/config:/config/rclone
