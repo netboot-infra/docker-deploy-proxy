@@ -25,5 +25,6 @@ services:
     environment:
       <<: *common-env
       AUTOHEAL_CONTAINER_LABEL: autoheal
+      AUTOHEAL_START_PERIOD: 30
     deploy:
       <<: *common-deploy
