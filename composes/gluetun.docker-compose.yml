@@ -1,0 +1,57 @@
+# Gluetun - VPN client  
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+
+networks:
+  vpn:
+    external: true
+  public:
+    external: true
+
+gluetun:
+  image: qmcgaw/gluetun
+  user: "1000:1000"
+  environment:
+    <<: *common-env
+    HTTPPROXY: on
+    SHADOWSOCKS: off
+    VPN_SERVICE_PROVIDER: nordvpn
+    OPENVPN_USER: $OPENVPN_USER
+    OPENVPN_PASSWORD: $OPENVPN_PASSWORD
+    SERVER_COUNTRIES: germany
+    HEALTH_VPN_DURATION_INITIAL: 120s
+    FIREWALL_OUTBOUND_SUBNETS: 172.20.0.0/16,192.168.1.0/24
+  networks:
+    - public
+  cap_add:
+    - NET_ADMIN
+  healthcheck:
+    test: "curl -x http://127.0.0.1:8888 -sf https://checkip.amazonaws.com || exit 1"
+    interval: 1m
+    timeout: 10s
+    retries: 1
+  deploy:
+    <<: *common-deploy
+    labels:
+      # Autoheal 
+      - "autoheal=true"
+      # Homepage 
+      - "homepage.group=Network"
+      - "homepage.name=Gluetun"
+      - "homepage.icon=gluetun.png"
+      - "homepage.description=VPN client that supports various VPN protocols, providing secure and private internet access for your applications."
+    resources:
+      limits:
+        cpus: '4.0'
+        memory: 256M
+      reservations:
+        cpus: '1.0'
+        memory: 128M
