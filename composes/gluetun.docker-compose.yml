@@ -17,7 +17,7 @@ networks:
     external: true
 
 gluetun:
-  image: qmcgaw/gluetun
+  image: qmcgaw/gluetun:v3.40
   user: "1000:1000"
   environment:
     <<: *common-env
