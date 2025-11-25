@@ -21,7 +21,6 @@ services:
     command:
       - rcd
       - --rc-web-gui
-      - --rc-web-gui-no-open-browser
       - --rc-addr=:5572
       - --log-level=INFO
       - --rc-user=administrator
