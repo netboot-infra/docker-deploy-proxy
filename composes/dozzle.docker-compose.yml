@@ -31,7 +31,7 @@ services:
         - homepage.group="System Monitoring"
         - homepage.name="Docker log viewer"
         - homepage.icon="dozzle.png"
-        - homepage.href="https://log.$DOMAIN_NAME/"
+        - homepage.href="https://log.$DOMAIN_NAME"
         - homepage.description="Real-time log viewer for Docker containers, providing an easy way to monitor application logs and troubleshoot issues."
         # Allow traefik to process this container
         - "traefik.enable=true"
