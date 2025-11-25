@@ -31,8 +31,6 @@ gluetun:
     FIREWALL_OUTBOUND_SUBNETS: 172.20.0.0/16,192.168.1.0/24
   networks:
     - public
-  cap_add:
-    - NET_ADMIN
   healthcheck:
     test: "curl -x http://127.0.0.1:8888 -sf https://checkip.amazonaws.com || exit 1"
     interval: 1m
