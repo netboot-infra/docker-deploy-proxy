@@ -6,7 +6,8 @@
         ":semanticCommitsDisabled",
         ":rebaseStalePrs",
         ":disableRateLimiting",
-        ":disableDependencyDashboard"
+        ":disableDependencyDashboard",
+        ":semanticCommits"
     ],
     "timezone": "Europe/Paris",
     "docker-compose": {
