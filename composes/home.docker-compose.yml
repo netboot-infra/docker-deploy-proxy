@@ -1,0 +1,63 @@
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage
+    user: "1000:1000"
+    networks:
+      - public
+    environment:
+      <<: *common-env
+      HOMEPAGE_ALLOWED_HOSTS: "*"
+      HOMEPAGE_VAR_TITLE: Netboot
+      HOMEPAGE_VAR_SEARCH_PROVIDER: duckduckgo
+      HOMEPAGE_VAR_HEADER_STYLE: glass
+      HOMEPAGE_VAR_THEME: dark
+      HOMEPAGE_VAR_WEATHER_CITY: Paris
+      HOMEPAGE_VAR_WEATHER_LAT: 41.661129
+      HOMEPAGE_VAR_WEATHER_LONG: -91.5302
+      HOMEPAGE_VAR_WEATHER_UNIT: fahrenheit
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - $STORAGE_PATH/core/home:/app/config
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000 > /dev/null 2>&1 || exit 1"]
+      timeout: 15s
+      retries: 3
+    deploy:
+      <<: *common-deploy
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+      labels:
+        # Allow sablier to process this container
+        - "sablier.enable=true"
+        - "sablier.group=home"
+        # Allow traefik to process this container
+        - "traefik.enable=true"
+        - "traefik.swarm.lbswarm=true"
+        - "traefik.http.routers.home.rule=Host(`home.$DOMAIN_NAME`)"
+        - "traefik.http.routers.home.entrypoints=https"
+        - "traefik.http.routers.home.middlewares=auth@swarm,sablier-home@swarm"
+        - "traefik.http.services.home.loadbalancer.server.port=3000"
+        - "traefik.http.middlewares.sablier-home.plugin.sablier.group=home"
+        - "traefik.http.middlewares.sablier-home.plugin.sablier.dynamic.displayName=Home"
+        - "traefik.http.middlewares.sablier-home.plugin.sablier.sessionDuration=15m"
