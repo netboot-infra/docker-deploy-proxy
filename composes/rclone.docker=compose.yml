@@ -18,6 +18,7 @@ services:
  rclone:
     image: rclone/rclone:latest
     read_only: true
+    user: "1000:1000"
     command:
       - rcd
       - --rc-web-gui
