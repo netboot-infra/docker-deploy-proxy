@@ -28,6 +28,12 @@ services:
         # Allow sablier to process this container
         - "sablier.enable=true"
         - "sablier.group=whoami"
+        # Homepage 
+        - "homepage.group=Web Services"
+        - "homepage.name=whoami"
+        - "homepage.icon=whoami.png"
+        - "homepage.href=https://whoami.$DOMAIN_NAME"
+        - "homepage.description=Request echo service used to verify reverse-proxy, headers, and auth middleware"
         # Allow traefik to process this container
         - "traefik.enable=true"
         - "traefik.swarm.lbswarm=true"
