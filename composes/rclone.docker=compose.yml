@@ -23,8 +23,6 @@ services:
       - --rc-web-gui
       - --rc-addr=:5572
       - --log-level=INFO
-      - --rc-user=administrator
-      - --rc-pass=$SUDO_PASSWORD
       - --config=/config/rclone/rclone.conf
       - --cache-dir=/tmp/.cache/rclone
     networks:
@@ -37,6 +35,8 @@ services:
         target: /tmp
     environment:
       <<: *common-env
+      RCLONE_USERNAME: administrator
+      RCLONE_PASSWORD: $SUDO_PASSWORD
     deploy:
       <<: *common-deploy
       labels:
