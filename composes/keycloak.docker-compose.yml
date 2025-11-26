@@ -17,6 +17,7 @@ services:
   keycloak:
     cap_drop:
       - "ALL"
+    command: ["start-dev", "--http-port", "8080"]
     deploy:
       !!merge <<: *common-deploy
       labels:
@@ -35,6 +36,11 @@ services:
       KC_HTTP_ENABLED: "true"
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+    healthcheck:
+      interval: 15s
+      retries: 15
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      timeout: 2s
     image: quay.io/keycloak/keycloak:26.4.6
     networks:
       - public
