@@ -24,7 +24,6 @@ services:
         # Allow traefik to process this container
         - "traefik.enable=true"
         - "traefik.swarm.lbswarm=true"
-        - "traefik.docker.network=public"
         - "traefik.http.routers.keycloak.rule=Host(`auth.$DOMAIN_NAME`)"
         - "traefik.http.routers.keycloak.entrypoints=https"
         - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
