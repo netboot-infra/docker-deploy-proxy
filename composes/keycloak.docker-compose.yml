@@ -30,10 +30,10 @@ services:
     environment:
       !!merge <<: *common-env
       KC_DB: postgres
-      KC_DB_URL_HOST: database
-      KC_DB_URL_DATABASE: keycloak_database
-      KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: keycloak
+      KC_DB_URL_DATABASE: keycloak_database
+      KC_DB_URL_HOST: database
+      KC_DB_USERNAME: keycloak
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     healthcheck:
@@ -44,17 +44,30 @@ services:
     image: quay.io/keycloak/keycloak:26.4.6
     networks:
       - public
+      - backend
     security_opt:
       - no-new-privileges:true
     user: "1000:1000"
     volumes:
       - $STORAGE_PATH/core/keycloak/data:/opt/keycloak/data
-
+  
   keycloak_database:
-    image: postgres:18.1
+    deploy:
+      !!merge <<: *common-deploy
     environment:
+      !!merge <<: *common-env
       POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
+      POSTGRES_USER: keycloak
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      test: ["CMD-SHELL", "pg_isready -d keycloak -U keycloak"]
+      timeout: 5s
+    image: postgres:18.1
+    networks:
+      - backend
+    user: "1000:1000"
     volumes:
       - $STORAGE_PATH/core/keycloak/database:/var/lib/postgresql/data
