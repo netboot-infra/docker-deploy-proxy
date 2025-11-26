@@ -29,7 +29,7 @@ services:
         - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
     environment:
       !!merge <<: *common-env
-      KC_DB: h2
+      KC_DB: dev-file
       KC_DB_PASSWORD: ""
       KC_DB_URL: jdbc:h2:file:/opt/keycloak/data/keycloak
       KC_DB_USERNAME: sa
