@@ -31,8 +31,8 @@ services:
       !!merge <<: *common-env
       KC_DB: postgres
       KC_DB_PASSWORD: keycloak
-      KC_DB_URL_DATABASE: keycloak_database
-      KC_DB_URL_HOST: database
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_URL_HOST: keycloak_database
       KC_DB_USERNAME: keycloak
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -68,6 +68,8 @@ services:
     image: postgres:18.1
     networks:
       - backend
+    tmpfs:
+      - /var/run/postgresql:rw,uid=1000,gid=1000
     user: "1000:1000"
     volumes:
-      - $STORAGE_PATH/core/keycloak/database:/var/lib/postgresql/data
+      - $STORAGE_PATH/core/keycloak/database:/var/lib/postgresql
