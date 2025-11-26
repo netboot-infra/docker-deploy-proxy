@@ -36,11 +36,24 @@ services:
       KC_DB_USERNAME: keycloak
       KC_BOOTSTRAP_ADMIN_USERNAME: administrator
       KC_BOOTSTRAP_ADMIN_PASSWORD: $SUDO_PASSWORD
+      KC_HEALTH_ENABLED: "true"
+      KC_HTTP_MANAGEMENT_PORT: "9081"
     healthcheck:
-      interval: 15s
-      retries: 15
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      test: [
+        "CMD-SHELL",
+        "exec 3<>/dev/tcp/localhost/$${ENV_KC_HTTP_MANAGEMENT_PORT:?}; \
+        echo -en 'GET /health/ready' >&3; \
+        # Give the server a moment to respond, then search for 'UP'
+        if timeout 3 cat <&3 | grep -m 1 'UP'; then \
+          exec 3<&-; exec 3>&-; exit 0; \
+        else \
+          exec 3<&-; exec 3>&-; exit 1; \
+        fi"
+      ]
+      start_period: 10s
+      interval: 5s
       timeout: 2s
+      retries: 20
     image: quay.io/keycloak/keycloak:26.4.6
     networks:
       - public
