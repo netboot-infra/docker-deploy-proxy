@@ -29,11 +29,11 @@ services:
         - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
     environment:
       !!merge <<: *common-env
-      KC_DB: dev-file
-      KC_DB_PASSWORD: ""
-      KC_DB_URL: jdbc:h2:file:/opt/keycloak/data/keycloak
-      KC_DB_USERNAME: sa
-      KC_HTTP_ENABLED: "true"
+      KC_DB: postgres
+      KC_DB_URL_HOST: database
+      KC_DB_URL_DATABASE: keycloak_database
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     healthcheck:
@@ -48,4 +48,13 @@ services:
       - no-new-privileges:true
     user: "1000:1000"
     volumes:
-      - $STORAGE_PATH/core/keycloak:/opt/keycloak/data
+      - $STORAGE_PATH/core/keycloak/data:/opt/keycloak/data
+
+  keycloak_database:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - $STORAGE_PATH/core/keycloak/database:/var/lib/postgresql/data
