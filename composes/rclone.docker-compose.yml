@@ -1,13 +1,12 @@
-x-common-env: &common-env
-  PGID: 1000
-  PUID: 1000
-  TZ: Europe/Paris
-
 x-common-deploy: &common-deploy
   restart_policy:
     condition: on-failure
     delay: 5s
     window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
 
 networks:
   backend: {}
@@ -15,10 +14,7 @@ networks:
     external: true
 
 services:
- rclone:
-    image: rclone/rclone:1.72.0@sha256:0eb18825ac9732c21c11d654007170572bbd495352bb6dbb624f18e4f462c496
-    read_only: true
-    user: "1000:1000"
+  rclone:
     command:
       - rcd
       - --rc-web-gui
@@ -26,20 +22,8 @@ services:
       - --log-level=INFO
       - --config=/config/rclone/rclone.conf
       - --cache-dir=/tmp/.cache/rclone
-    networks:
-      - public
-    volumes:
-      - $STORAGE_PATH:/docker:ro
-      - $STORAGE_PATH/core/rclone/config:/config/rclone
-      - $STORAGE_PATH/core/rclone/logs:/logs
-      - type: tmpfs
-        target: /tmp
-    environment:
-      <<: *common-env
-      RCLONE_USERNAME: administrator
-      RCLONE_PASSWORD: $SUDO_PASSWORD
     deploy:
-      <<: *common-deploy
+      !!merge <<: *common-deploy
       labels:
         # Allow traefik to process this container
         - "traefik.enable=true"
@@ -53,6 +37,18 @@ services:
         - "homepage.icon=rclone.png"
         - "homepage.href=https://rclone.$DOMAIN_NAME"
         - "homepage.description=A web interface for Rclone."
-
-
-
+    environment:
+      !!merge <<: *common-env
+      RCLONE_PASSWORD: $SUDO_PASSWORD
+      RCLONE_USERNAME: administrator
+    image: rclone/rclone:1.72.0@sha256:0eb18825ac9732c21c11d654007170572bbd495352bb6dbb624f18e4f462c496
+    networks:
+      - public
+    read_only: true
+    user: "1000:1000"
+    volumes:
+      - $STORAGE_PATH:/docker:ro
+      - $STORAGE_PATH/core/rclone/config:/config/rclone
+      - $STORAGE_PATH/core/rclone/logs:/logs
+      - target: /tmp
+        type: tmpfs

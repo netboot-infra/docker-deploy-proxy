@@ -1,13 +1,12 @@
-x-common-env: &common-env
-  PGID: 1000
-  PUID: 1000
-  TZ: Europe/Paris
-
 x-common-deploy: &common-deploy
   restart_policy:
     condition: on-failure
     delay: 5s
     window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
 
 networks:
   backend: {}
@@ -16,16 +15,8 @@ networks:
 
 services:
   dozzle:
-    image: amir20/dozzle@sha256:82773cc7e7443de8ba7f23bd175a80d79c9e4d4ff1c0a5f8701e04e6c5e383bc
-    user: "1000:1000"
-    networks:
-      - public
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      <<: *common-env
     deploy:
-      <<: *common-deploy
+      !!merge <<: *common-deploy
       labels:
         # Homepage
         - "homepage.group=System Monitoring"
@@ -39,3 +30,11 @@ services:
         - "traefik.http.routers.dozzle.rule=Host(`log.$DOMAIN_NAME`)"
         - "traefik.http.routers.dozzle.entrypoints=https"
         - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+    environment:
+      !!merge <<: *common-env
+    image: amir20/dozzle@sha256:82773cc7e7443de8ba7f23bd175a80d79c9e4d4ff1c0a5f8701e04e6c5e383bc
+    networks:
+      - public
+    user: "1000:1000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro

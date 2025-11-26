@@ -1,13 +1,12 @@
-x-common-env: &common-env
-  PGID: 1000
-  PUID: 1000
-  TZ: Europe/Paris
-
 x-common-deploy: &common-deploy
   restart_policy:
     condition: on-failure
     delay: 5s
     window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
 
 networks:
   backend: {}
@@ -16,18 +15,10 @@ networks:
 
 services:
   whoami:
-    image: traefik/whoami:v1.11@sha256:200689790a0a0ea48ca45992e0450bc26ccab5307375b41c84dfc4f2475937ab
-    user: "1000:1000"
-    environment:
-      <<: *common-env
-    networks:
-      - public
     cap_drop:
       - "ALL"
-    security_opt:
-      - no-new-privileges:true
     deploy:
-      <<: *common-deploy
+      !!merge <<: *common-deploy
       labels:
         # Allow sablier to process this container
         - "sablier.enable=true"
@@ -48,3 +39,11 @@ services:
         - "traefik.http.middlewares.sablier-whoami.plugin.sablier.group=whoami"
         - "traefik.http.middlewares.sablier-whoami.plugin.sablier.dynamic.displayName=Whoami"
         - "traefik.http.middlewares.sablier-whoami.plugin.sablier.sessionDuration=15s"
+    environment:
+      !!merge <<: *common-env
+    image: traefik/whoami:v1.11@sha256:200689790a0a0ea48ca45992e0450bc26ccab5307375b41c84dfc4f2475937ab
+    networks:
+      - public
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"

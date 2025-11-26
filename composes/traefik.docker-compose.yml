@@ -1,13 +1,12 @@
-x-common-env: &common-env
-  PGID: 1000
-  PUID: 1000
-  TZ: Europe/Paris
-
 x-common-deploy: &common-deploy
   restart_policy:
     condition: on-failure
     delay: 5s
     window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
 
 networks:
   backend: {}
@@ -16,8 +15,6 @@ networks:
 
 services:
   traefik:
-    image: traefik:v3.6.2@sha256:aaf0f6185419a50c74651448c1a5bf4606bd2d2ddb7b8749eed505d55bf8b8ea
-    user: "1000:1000"
     command:
       - --global.checkNewVersion=false
       - --global.sendAnonymousUsage=false
@@ -52,22 +49,8 @@ services:
       - --experimental.plugins.sablier.version=v1.0.1
       - --experimental.plugins.crowdsec-bouncer.modulename=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
       - --experimental.plugins.crowdsec-bouncer.version=v1.4.6
-    ports:
-      - "80:80"
-      - "443:443"
-      - "8080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - $STORAGE_PATH/core/traefik/certs/:/certs
-      - $STORAGE_PATH/core/traefik/log:/var/log/
-      - $STORAGE_PATH/core/traefik/plugins-storage:/plugins-storage
-    environment:
-      <<: *common-env
-      CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN
-    networks:
-      - public
     deploy:
-      <<: *common-deploy
+      !!merge <<: *common-deploy
       resources:
         limits:
           cpus: '0.50'
@@ -75,32 +58,47 @@ services:
         reservations:
           cpus: '0.25'
           memory: 128M
-
-  nginx_error:
-    image: ghcr.io/netboot-infra/traefik-error-pages:v1.0.3@sha256:dad0fe35a448d8838828108e2864f969989e6921e73983f6e433e8cec870c278
-    user: "1000:1000"
-    read_only: true
+    environment:
+      !!merge <<: *common-env
+      CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN
+    image: traefik:v3.6.2@sha256:aaf0f6185419a50c74651448c1a5bf4606bd2d2ddb7b8749eed505d55bf8b8ea
     networks:
       - public
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    user: "1000:1000"
     volumes:
-      - type: tmpfs
-        target: /tmp
-    environment:
-      <<: *common-env
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - $STORAGE_PATH/core/traefik/certs/:/certs
+      - $STORAGE_PATH/core/traefik/log:/var/log/
+      - $STORAGE_PATH/core/traefik/plugins-storage:/plugins-storage
+
+  nginx_error:
     deploy:
-      <<: [*common-deploy]
+      !!merge <<: [*common-deploy]
       labels:
         # Allow traefik to process this container
         traefik.enable: "true"
-        # Catch-all router (matches all hosts)
-        traefik.http.routers.error-router.rule: HostRegexp(`^.+$$`)
-        traefik.http.routers.error-router.priority: 1
-        traefik.http.routers.error-router.entrypoints: https
-        traefik.http.routers.error-router.middlewares: error-pages-middleware@swarm
+        traefik.http.middlewares.error-pages-middleware.errors.query: "/{status}.html"
+        traefik.http.middlewares.error-pages-middleware.errors.service: error-pages-service
         # Error-page middleware
         traefik.http.middlewares.error-pages-middleware.errors.status: 400-599
-        traefik.http.middlewares.error-pages-middleware.errors.service: error-pages-service
-        traefik.http.middlewares.error-pages-middleware.errors.query: "/{status}.html"
+        traefik.http.routers.error-router.entrypoints: https
+        traefik.http.routers.error-router.middlewares: error-pages-middleware@swarm
+        traefik.http.routers.error-router.priority: 1
+        # Catch-all router (matches all hosts)
+        traefik.http.routers.error-router.rule: HostRegexp(`^.+$$`)
         # Backend service for error pages
         traefik.http.services.error-pages-service.loadbalancer.server.port: 8080
-    
+    environment:
+      !!merge <<: *common-env
+    image: ghcr.io/netboot-infra/traefik-error-pages:v1.0.3@sha256:dad0fe35a448d8838828108e2864f969989e6921e73983f6e433e8cec870c278
+    networks:
+      - public
+    read_only: true
+    user: "1000:1000"
+    volumes:
+      - target: /tmp
+        type: tmpfs

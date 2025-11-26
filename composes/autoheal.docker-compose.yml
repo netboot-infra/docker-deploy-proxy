@@ -1,13 +1,12 @@
-x-common-env: &common-env
-  PGID: 1000
-  PUID: 1000
-  TZ: Europe/Paris
-
 x-common-deploy: &common-deploy
   restart_policy:
     condition: on-failure
     delay: 5s
     window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
 
 networks:
   backend: {}
@@ -16,15 +15,15 @@ networks:
 
 services:
   autoheal:
+    deploy:
+      !!merge <<: *common-deploy
+    environment:
+      !!merge <<: *common-env
+      AUTOHEAL_CONTAINER_LABEL: autoheal
+      AUTOHEAL_START_PERIOD: 30
     image: willfarrell/autoheal:1.2.0@sha256:31f580ef0279eaced5b38d631b08c474d70d8403c1c2fdd6ddcf2e879d5f3f7c
     read_only: true
     user: "1000:1000"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      <<: *common-env
-      AUTOHEAL_CONTAINER_LABEL: autoheal
-      AUTOHEAL_START_PERIOD: 30
-    deploy:
-      <<: *common-deploy

@@ -1,13 +1,12 @@
-x-common-env: &common-env
-  PGID: 1000
-  PUID: 1000
-  TZ: Europe/Paris
-
 x-common-deploy: &common-deploy
   restart_policy:
     condition: on-failure
     delay: 5s
     window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
 
 configs:
   acquis:
@@ -20,20 +19,20 @@ networks:
 
 services:
   crowdsec:
-    image: crowdsecurity/crowdsec:latest@sha256:4beb1633cf4f41bb6f9e64d065d151d3aa5e3aa7082d5c3061a243037db0d890
-    user: "1000:1000"
-    environment:
-      <<: *common-env
-      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/http-dos"
-      CUSTOM_HOSTNAME: crowdsec
     configs:
       - source: acquis
         target: /etc/crowdsec/acquis.yaml
+    deploy:
+      !!merge <<: *common-deploy
+    environment:
+      !!merge <<: *common-env
+      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/http-dos"
+      CUSTOM_HOSTNAME: crowdsec
+    image: crowdsecurity/crowdsec:latest@sha256:4beb1633cf4f41bb6f9e64d065d151d3aa5e3aa7082d5c3061a243037db0d890
+    networks:
+      - backend
+    user: "1000:1000"
     volumes:
       - $STORAGE_PATH/core/crowdsec/config:/etc/crowdsec/
       - $STORAGE_PATH/core/crowdsec/data:/var/lib/crowdsec/data/
       - $STORAGE_PATH/core/traefik/log:/var/log/traefik/:ro
-    networks:
-      - backend
-    deploy:
-      <<: *common-deploy

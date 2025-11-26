@@ -1,14 +1,12 @@
-# Gluetun - VPN client  
-x-common-env: &common-env
-  PGID: 1000
-  PUID: 1000
-  TZ: Europe/Paris
-
 x-common-deploy: &common-deploy
   restart_policy:
     condition: on-failure
     delay: 5s
     window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
 
 networks:
   vpn:
@@ -18,30 +16,10 @@ networks:
 
 services:
   gluetun:
-    image: qmcgaw/gluetun:v3.40@sha256:ef4a44819a60469682c7b5e69183e6401171891feaa60186652d292c59e41b30
-    user: "root"
-    environment:
-      <<: *common-env
-      HTTPPROXY: on
-      SHADOWSOCKS: off
-      VPN_SERVICE_PROVIDER: nordvpn
-      OPENVPN_USER: $OPENVPN_USER
-      OPENVPN_PASSWORD: $OPENVPN_PASSWORD
-      SERVER_COUNTRIES: germany
-      HEALTH_VPN_DURATION_INITIAL: 120s
-      FIREWALL_OUTBOUND_SUBNETS: 172.20.0.0/16,192.168.1.0/24
-    networks:
-      - vpn
-      - public
     cap_add:
       - NET_ADMIN
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- --execute=http_proxy=http://127.0.0.1:8888 https://checkip.amazonaws.com >/dev/null 2>&1"]
-      interval: 1m
-      timeout: 10s
-      retries: 5
     deploy:
-      <<: *common-deploy
+      !!merge <<: *common-deploy
       labels:
         # Autoheal 
         - "autoheal=true"
@@ -57,3 +35,23 @@ services:
         reservations:
           cpus: '1.0'
           memory: 128M
+    environment:
+      !!merge <<: *common-env
+      FIREWALL_OUTBOUND_SUBNETS: 172.20.0.0/16,192.168.1.0/24
+      HEALTH_VPN_DURATION_INITIAL: 120s
+      HTTPPROXY: on
+      OPENVPN_PASSWORD: $OPENVPN_PASSWORD
+      OPENVPN_USER: $OPENVPN_USER
+      SERVER_COUNTRIES: germany
+      SHADOWSOCKS: off
+      VPN_SERVICE_PROVIDER: nordvpn
+    healthcheck:
+      interval: 1m
+      retries: 5
+      test: ["CMD-SHELL", "wget -qO- --execute=http_proxy=http://127.0.0.1:8888 https://checkip.amazonaws.com >/dev/null 2>&1"]
+      timeout: 10s
+    image: qmcgaw/gluetun:v3.40@sha256:ef4a44819a60469682c7b5e69183e6401171891feaa60186652d292c59e41b30
+    networks:
+      - vpn
+      - public
+    user: "root"
