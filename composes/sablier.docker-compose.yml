@@ -14,6 +14,8 @@ networks:
 
 services:
   sablier:
+    cap_drop:
+      - "ALL"
     command:
       - start
       - --provider.name=docker_swarm
@@ -28,6 +30,8 @@ services:
     image: sablierapp/sablier:1.10.5@sha256:c8ec255212d57708d0fa5d5b76f38e6360b4125efce14f667f28030da112ea94
     networks:
       - public
+    security_opt:
+      - no-new-privileges:true
     user: "1000:1000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

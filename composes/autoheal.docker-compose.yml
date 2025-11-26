@@ -15,6 +15,8 @@ networks:
 
 services:
   autoheal:
+    cap_drop:
+      - "ALL"
     deploy:
       !!merge <<: *common-deploy
     environment:
@@ -23,6 +25,8 @@ services:
       AUTOHEAL_START_PERIOD: 30
     image: willfarrell/autoheal:1.2.0@sha256:31f580ef0279eaced5b38d631b08c474d70d8403c1c2fdd6ddcf2e879d5f3f7c
     read_only: true
+    security_opt:
+      - no-new-privileges:true
     user: "1000:1000"
     volumes:
       - /etc/localtime:/etc/localtime:ro
