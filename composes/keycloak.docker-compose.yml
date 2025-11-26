@@ -51,7 +51,7 @@ services:
       - $STORAGE_PATH/core/keycloak/data:/opt/keycloak/data
 
   keycloak_database:
-    image: postgres:18
+    image: postgres:18.1
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
