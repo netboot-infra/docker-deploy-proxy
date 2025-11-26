@@ -41,8 +41,6 @@ services:
       KC_HOSTNAME: https://auth.$DOMAIN_NAME
       KC_PROXY: edge
       KC_FEATURES: docker
-      KC_LOG_LEVEL: org.keycloak.broker.oidc:debug
-      KC_LOG: console
     image: quay.io/keycloak/keycloak:26.4.6
     networks:
       - public
