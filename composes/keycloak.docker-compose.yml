@@ -38,6 +38,9 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: $SUDO_PASSWORD
       KC_HEALTH_ENABLED: "true"
       KC_HTTP_MANAGEMENT_PORT: "9081"
+      KC_HOSTNAME: https://auth.$DOMAIN_NAME
+      KC_PROXY: edge
+      KC_FEATURES: docker
     image: quay.io/keycloak/keycloak:26.4.6
     networks:
       - public
