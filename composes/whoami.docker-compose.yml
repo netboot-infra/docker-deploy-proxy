@@ -43,7 +43,7 @@ services:
         - "traefik.swarm.lbswarm=true"
         - "traefik.http.routers.whoami.rule=Host(`whoami.$DOMAIN_NAME`)"
         - "traefik.http.routers.whoami.entrypoints=https"
-        - "traefik.http.routers.whoami.middlewares=auth@swarm,sablier-whoami@swarm"
+        - "traefik.http.routers.whoami.middlewares=sablier-whoami@swarm"
         - "traefik.http.services.whoami.loadbalancer.server.port=80"
         - "traefik.http.middlewares.sablier-whoami.plugin.sablier.group=whoami"
         - "traefik.http.middlewares.sablier-whoami.plugin.sablier.dynamic.displayName=Whoami"
