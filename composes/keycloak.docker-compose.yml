@@ -1,0 +1,45 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  keycloak:
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Allow traefik to process this container
+        - "traefik.enable=true"
+        - "traefik.swarm.lbswarm=true"
+        - "traefik.http.routers.keycloak.rule=Host(`auth.$DOMAIN_NAME`)"
+        - "traefik.http.routers.keycloak.entrypoints=https"
+        - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+    environment:
+      !!merge <<: *common-env
+      KC_DB: h2
+      KC_DB_PASSWORD: ""
+      KC_DB_URL: jdbc:h2:file:/opt/keycloak/data/keycloak
+      KC_DB_USERNAME: sa
+      KC_HTTP_ENABLED: "true"
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    image: quay.io/keycloak/keycloak:26.4.6
+    networks:
+      - public
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    volumes:
+      - $STORAGE_PATH/core/keycloak:/opt/keycloak/data
