@@ -45,6 +45,7 @@ services:
       - --allowed-role=member,admin
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
+      - --show-debug-on-error=true
     deploy:
       !!merge <<: *common-deploy
       labels:
@@ -99,6 +100,7 @@ services:
       - --allowed-role=admin
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
+      - --show-debug-on-error=true
     deploy:
       !!merge <<: *common-deploy
       labels:
