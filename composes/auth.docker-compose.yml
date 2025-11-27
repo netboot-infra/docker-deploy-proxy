@@ -70,7 +70,7 @@ services:
         - "traefik.http.middlewares.auth-headers.headers.stsIncludeSubdomains=true"
     environment:
       !!merge <<: *common-env
-    image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine
+    image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine@sha256:ea02c644f942514e41e8bc78e384efb29cf8a73696c0df8f814ae1f0354f8c51
     networks:
       - public
       - backend
@@ -135,7 +135,7 @@ services:
         - "traefik.http.middlewares.auth-headers.headers.stsIncludeSubdomains=true"
     environment:
       !!merge <<: *common-env
-    image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine
+    image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine@sha256:ea02c644f942514e41e8bc78e384efb29cf8a73696c0df8f814ae1f0354f8c51
     networks:
       - public
       - backend
