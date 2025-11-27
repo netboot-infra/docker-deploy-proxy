@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
-  
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -51,32 +51,46 @@ jobs:
 
       - name: Print stack configuration
         env:
+          # Global variables
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
           STORAGE_PATH: ${{ vars.STORAGE_PATH }}
-          CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
-          CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
-          AUTHENTIK_TOKEN: ${{ secrets.AUTHENTIK_TOKEN }}
-          AUTHENTIK_SECRET_KEY: ${{ secrets.AUTHENTIK_SECRET_KEY }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
+          DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
+          # Traefik variables
+          CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
+          # CrowdSec variables
+          CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
+          # Gluetun variables
           OPENVPN_USER: ${{ secrets.OPENVPN_USER }}
           OPENVPN_PASSWORD: ${{ secrets.OPENVPN_PASSWORD }}
-          DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
+          # OAuth2 Proxy variables
+          OAUTH2_PROXY_CLIENT_ID: ${{ secrets.OAUTH2_PROXY_CLIENT_ID }}
+          OAUTH2_PROXY_CLIENT_SECRET: ${{ secrets.OAUTH2_PROXY_CLIENT_SECRET }}
+          OAUTH2_PROXY_COOKIE_SECRET_ADMIN: ${{ secrets.OAUTH2_PROXY_COOKIE_SECRET_ADMIN }}
+          OAUTH2_PROXY_COOKIE_SECRET_MEMBER: ${{ secrets.OAUTH2_PROXY_COOKIE_SECRET_MEMBER }}
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst
 
       - name: Deploy stack to remote Docker host
         env:
+          # Global variables
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
           STORAGE_PATH: ${{ vars.STORAGE_PATH }}
-          CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
-          CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
-          AUTHENTIK_TOKEN: ${{ secrets.AUTHENTIK_TOKEN }}
-          AUTHENTIK_SECRET_KEY: ${{ secrets.AUTHENTIK_SECRET_KEY }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
+          DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
+          # Traefik variables
+          CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
+          # CrowdSec variables
+          CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
+          # Gluetun variables
           OPENVPN_USER: ${{ secrets.OPENVPN_USER }}
           OPENVPN_PASSWORD: ${{ secrets.OPENVPN_PASSWORD }}
-          DOCKER_HOST: "ssh://${{ vars.REMOTE_DOCKER_HOST }}:${{ vars.REMOTE_DOCKER_SSH_PORT }}"
+          # OAuth2 Proxy variables
+          OAUTH2_PROXY_CLIENT_ID: ${{ secrets.OAUTH2_PROXY_CLIENT_ID }}
+          OAUTH2_PROXY_CLIENT_SECRET: ${{ secrets.OAUTH2_PROXY_CLIENT_SECRET }}
+          OAUTH2_PROXY_COOKIE_SECRET_ADMIN: ${{ secrets.OAUTH2_PROXY_COOKIE_SECRET_ADMIN }}
+          OAUTH2_PROXY_COOKIE_SECRET_MEMBER: ${{ secrets.OAUTH2_PROXY_COOKIE_SECRET_MEMBER }}
         run: |
           yq ea '. as $item ireduce ({}; . *+ $item)' composes/* | envsubst | docker stack deploy --compose-file - core

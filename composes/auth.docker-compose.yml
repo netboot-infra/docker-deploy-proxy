@@ -1,0 +1,103 @@
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  auth-member:
+    cap_drop:
+      - "ALL"
+    command:
+      - --client-id=$OAUTH2_PROXY_CLIENT_ID
+      - --client-secret=$OAUTH2_PROXY_CLIENT_SECRET
+      - --cookie-domain=$DOMAIN_NAME
+      - --cookie-expire=168h
+      - --cookie-httponly=true
+      - --cookie-name=oauth_member
+      - --cookie-refresh=10m
+      - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_MEMBER
+      - --cookie-secure=true
+      - --email-domain=*
+      - --http-address=0.0.0.0:4181
+      - --logging-filename=/dev/stdout
+      - --oidc-issuer-url=https://auth.$DOMAIN_NAME/realms/netboot
+      - --provider=keycloak-oidc
+      - --request-logging=true
+      - --reverse-proxy=true
+      - --scope=openid profile email offline_access
+      - --standard-logging=true
+      - --whitelist-domain=*.$DOMAIN_NAME
+      - --skip-provider-button=true
+      - --upstream=static://202
+      - --proxy-prefix=/oauth2/member/
+      - --session-store-type=redis
+      - --redis-connection-url=redis://redis:6379/1
+      - --allowed-groups=member,admin
+    deploy:
+      labels:
+        # Autoheal 
+        - "autoheal=true"
+        # Traefik
+        - "traefik.enable=true"
+        - "traefik.http.middlewares.auth-member.forwardauth.address=http://auth-member:4181"
+        - "traefik.http.middlewares.auth-member.forwardauth.authResponseHeaders=X-Forwarded-User"
+        - "traefik.http.routers.auth-member.entrypoints=https"
+        - "traefik.http.routers.auth-member.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/member`)"
+        - "traefik.http.services.auth-member.loadbalancer.server.port=4181"
+    image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine
+    networks:
+      - public
+      - backend
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+
+  auth-admin:
+    cap_drop:
+      - "ALL"
+    command:
+      - --client-id=$OAUTH2_PROXY_CLIENT_ID
+      - --client-secret=$OAUTH2_PROXY_CLIENT_SECRET
+      - --cookie-domain=$DOMAIN_NAME
+      - --cookie-expire=168h
+      - --cookie-httponly=true
+      - --cookie-name=oauth_admin
+      - --cookie-refresh=10m
+      - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_ADMIN
+      - --cookie-secure=true
+      - --email-domain=*
+      - --http-address=0.0.0.0:4181
+      - --logging-filename=/dev/stdout
+      - --oidc-issuer-url=https://auth.$DOMAIN_NAME/realms/netboot
+      - --provider=keycloak-oidc
+      - --request-logging=true
+      - --reverse-proxy=true
+      - --scope=openid profile email offline_access
+      - --standard-logging=true
+      - --whitelist-domain=*.$DOMAIN_NAME
+      - --skip-provider-button=true
+      - --upstream=static://202
+      - --proxy-prefix=/oauth2/admin/
+      - --session-store-type=redis
+      - --redis-connection-url=redis://redis:6379/2
+      - --allowed-groups=admin
+    deploy:
+      labels:
+        # Autoheal 
+        - "autoheal=true"
+        # Traefik
+        - "traefik.enable=true"
+        - "traefik.http.middlewares.auth-admin.forwardauth.address=http://auth-admin:4181"
+        - "traefik.http.middlewares.auth-admin.forwardauth.authResponseHeaders=X-Forwarded-User"
+        - "traefik.http.routers.auth-admin.entrypoints=https"
+        - "traefik.http.routers.auth-admin.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/admin`)"
+        - "traefik.http.services.auth-admin.loadbalancer.server.port=4181"
+    image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine
+    networks:
+      - public
+      - backend
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
