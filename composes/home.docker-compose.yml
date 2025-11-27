@@ -29,7 +29,7 @@ services:
         - "traefik.swarm.lbswarm=true"
         - "traefik.http.routers.home.rule=Host(`home.$DOMAIN_NAME`)"
         - "traefik.http.routers.home.entrypoints=https"
-        - "traefik.http.routers.home.middlewares=sablier-home@swarm"
+        - "traefik.http.routers.home.middlewares=auth-member,sablier-home"
         - "traefik.http.services.home.loadbalancer.server.port=3000"
         - "traefik.http.middlewares.sablier-home.plugin.sablier.group=home"
         - "traefik.http.middlewares.sablier-home.plugin.sablier.dynamic.displayName=Home"

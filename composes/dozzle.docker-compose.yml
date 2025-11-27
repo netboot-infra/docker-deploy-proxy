@@ -32,6 +32,7 @@ services:
         - "traefik.http.routers.dozzle.rule=Host(`log.$DOMAIN_NAME`)"
         - "traefik.http.routers.dozzle.entrypoints=https"
         - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+        - "traefik.http.routers.dozzle.middlewares=auth-admin"
     environment:
       !!merge <<: *common-env
     image: amir20/dozzle@sha256:82773cc7e7443de8ba7f23bd175a80d79c9e4d4ff1c0a5f8701e04e6c5e383bc

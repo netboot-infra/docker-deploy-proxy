@@ -33,6 +33,7 @@ services:
         - "traefik.http.routers.rclone.rule=Host(`rclone.$DOMAIN_NAME`)"
         - "traefik.http.routers.rclone.entrypoints=https"
         - "traefik.http.services.rclone.loadbalancer.server.port=5572"
+        - "traefik.http.routers.rclone.middlewares=auth-admin"
         # Homepage 
         - "homepage.group=Media Management"
         - "homepage.name=Rclone"
