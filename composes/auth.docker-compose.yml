@@ -46,6 +46,7 @@ services:
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
       - --show-debug-on-error=true
+      - --custom-templates-dir=/templates
     deploy:
       !!merge <<: *common-deploy
       labels:
@@ -110,6 +111,7 @@ services:
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
       - --show-debug-on-error=true
+      - --custom-templates-dir=/templates
     deploy:
       !!merge <<: *common-deploy
       labels:
