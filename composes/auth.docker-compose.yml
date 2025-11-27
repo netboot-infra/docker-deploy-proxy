@@ -42,7 +42,7 @@ services:
       - --proxy-prefix=/oauth2/member
       - --session-store-type=redis
       - --redis-connection-url=redis://redis:6379/1
-      - --allowed-group=member,admin
+      - --allowed-role=member,admin
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
     deploy:
@@ -96,7 +96,7 @@ services:
       - --proxy-prefix=/oauth2/admin
       - --session-store-type=redis
       - --redis-connection-url=redis://redis:6379/2
-      - --allowed-group=admin
+      - --allowed-role=admin
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
     deploy:
