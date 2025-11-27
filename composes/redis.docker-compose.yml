@@ -1,0 +1,36 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+
+services:
+  redis:
+    cap_drop:
+      - "ALL"
+    command: --save 60 1 --loglevel warning
+    deploy:
+      !!merge <<: *common-deploy
+    environment:
+      !!merge <<: *common-env
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      timeout: 3s
+    image: redis:alpine@sha256:6cbef353e480a8a6e7f10ec545f13d7d3fa85a212cdcc5ffaf5a1c818b9d3798
+    networks:
+      - backend
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    volumes:
+      - $STORAGE_PATH/core/redis:/data
