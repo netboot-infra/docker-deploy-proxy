@@ -44,6 +44,7 @@ services:
       - --redis-connection-url=redis://redis:6379/1
       - --keycloak-group=member,admin
       - --footer=-
+      - --insecure-oidc-allow-unverified-email=true
     deploy:
       !!merge <<: *common-deploy
       labels:
@@ -97,6 +98,7 @@ services:
       - --redis-connection-url=redis://redis:6379/2
       - --keycloak-group=admin
       - --footer=-
+      - --insecure-oidc-allow-unverified-email=true
     deploy:
       !!merge <<: *common-deploy
       labels:
