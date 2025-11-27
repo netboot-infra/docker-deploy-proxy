@@ -28,7 +28,7 @@ services:
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_MEMBER
       - --cookie-secure=true
       - --email-domain=*
-      - --http-address=0.0.0.0:4181
+      - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
       - --oidc-issuer-url=https://auth.$DOMAIN_NAME/realms/netboot
       - --provider=keycloak-oidc
@@ -50,11 +50,11 @@ services:
         - "autoheal=true"
         # Traefik
         - "traefik.enable=true"
-        - "traefik.http.middlewares.auth-member.forwardauth.address=http://auth-member:4181"
+        - "traefik.http.middlewares.auth-member.forwardauth.address=http://auth-member:4180"
         - "traefik.http.middlewares.auth-member.forwardauth.authResponseHeaders=X-Forwarded-User"
         - "traefik.http.routers.auth-member.entrypoints=https"
         - "traefik.http.routers.auth-member.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/member`)"
-        - "traefik.http.services.auth-member.loadbalancer.server.port=4181"
+        - "traefik.http.services.auth-member.loadbalancer.server.port=4180"
     environment:
       !!merge <<: *common-env
     image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine
@@ -80,7 +80,7 @@ services:
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_ADMIN
       - --cookie-secure=true
       - --email-domain=*
-      - --http-address=0.0.0.0:4181
+      - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
       - --oidc-issuer-url=https://auth.$DOMAIN_NAME/realms/netboot
       - --provider=keycloak-oidc
@@ -102,11 +102,11 @@ services:
         - "autoheal=true"
         # Traefik
         - "traefik.enable=true"
-        - "traefik.http.middlewares.auth-admin.forwardauth.address=http://auth-admin:4181"
+        - "traefik.http.middlewares.auth-admin.forwardauth.address=http://auth-admin:4180"
         - "traefik.http.middlewares.auth-admin.forwardauth.authResponseHeaders=X-Forwarded-User"
         - "traefik.http.routers.auth-admin.entrypoints=https"
         - "traefik.http.routers.auth-admin.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/admin`)"
-        - "traefik.http.services.auth-admin.loadbalancer.server.port=4181"
+        - "traefik.http.services.auth-admin.loadbalancer.server.port=4180"
     environment:
       !!merge <<: *common-env
     image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine
