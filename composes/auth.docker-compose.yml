@@ -1,3 +1,13 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
 networks:
   backend: {}
   public:
@@ -34,6 +44,7 @@ services:
       - --redis-connection-url=redis://redis:6379/1
       - --allowed-groups=member,admin
     deploy:
+      !!merge <<: *common-deploy
       labels:
         # Autoheal 
         - "autoheal=true"
@@ -44,6 +55,8 @@ services:
         - "traefik.http.routers.auth-member.entrypoints=https"
         - "traefik.http.routers.auth-member.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/member`)"
         - "traefik.http.services.auth-member.loadbalancer.server.port=4181"
+    environment:
+      !!merge <<: *common-env
     image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine
     networks:
       - public
@@ -83,6 +96,7 @@ services:
       - --redis-connection-url=redis://redis:6379/2
       - --allowed-groups=admin
     deploy:
+      !!merge <<: *common-deploy
       labels:
         # Autoheal 
         - "autoheal=true"
@@ -93,6 +107,8 @@ services:
         - "traefik.http.routers.auth-admin.entrypoints=https"
         - "traefik.http.routers.auth-admin.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/admin`)"
         - "traefik.http.services.auth-admin.loadbalancer.server.port=4181"
+    environment:
+      !!merge <<: *common-env
     image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine
     networks:
       - public
