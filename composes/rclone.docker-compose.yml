@@ -20,6 +20,7 @@ services:
     command:
       - rcd
       - --rc-web-gui
+      - --rc-no-auth
       - --rc-addr=:5572
       - --log-level=INFO
       - --config=/config/rclone/rclone.conf
@@ -42,8 +43,6 @@ services:
         - "homepage.description=A web interface for Rclone."
     environment:
       !!merge <<: *common-env
-      RCLONE_PASSWORD: $SUDO_PASSWORD
-      RCLONE_USERNAME: administrator
     image: rclone/rclone:1.72.0@sha256:0eb18825ac9732c21c11d654007170572bbd495352bb6dbb624f18e4f462c496
     networks:
       - public
