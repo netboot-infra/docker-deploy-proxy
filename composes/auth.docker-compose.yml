@@ -34,7 +34,7 @@ services:
       - --provider=keycloak-oidc
       - --request-logging=true
       - --reverse-proxy=true
-      - --scope=openid profile email offline_access
+      - --scope=openid profile email offline_access group
       - --standard-logging=true
       - --whitelist-domain=*.$DOMAIN_NAME
       - --skip-provider-button=true
@@ -88,7 +88,7 @@ services:
       - --provider=keycloak-oidc
       - --request-logging=true
       - --reverse-proxy=true
-      - --scope=openid profile email offline_access
+      - --scope=openid profile email offline_access group
       - --standard-logging=true
       - --whitelist-domain=*.$DOMAIN_NAME
       - --skip-provider-button=true
