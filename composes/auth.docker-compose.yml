@@ -42,7 +42,7 @@ services:
       - --proxy-prefix=/oauth2/member/
       - --session-store-type=redis
       - --redis-connection-url=redis://redis:6379/1
-      - --allowed-groups=member,admin
+      - --keycloak-group=member,admin
     deploy:
       !!merge <<: *common-deploy
       labels:
@@ -94,7 +94,7 @@ services:
       - --proxy-prefix=/oauth2/admin/
       - --session-store-type=redis
       - --redis-connection-url=redis://redis:6379/2
-      - --allowed-groups=admin
+      - --keycloak-group=admin
     deploy:
       !!merge <<: *common-deploy
       labels:
