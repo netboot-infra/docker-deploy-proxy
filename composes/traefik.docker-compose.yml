@@ -105,6 +105,5 @@ services:
       - public
     read_only: true
     user: "1000:1000"
-    volumes:
-      - target: /tmp
-        type: tmpfs
+    tmpfs:
+      - /tmp:rw,uid=1000,gid=1000

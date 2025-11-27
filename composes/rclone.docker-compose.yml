@@ -55,5 +55,5 @@ services:
       - $BACKUP_PATH:/backup
       - $STORAGE_PATH/core/rclone/config:/config/rclone
       - $STORAGE_PATH/core/rclone/logs:/logs
-      - target: /tmp
-        type: tmpfs
+    tmpfs:
+      - /tmp:rw,uid=1000,gid=1000
