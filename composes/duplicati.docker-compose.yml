@@ -20,6 +20,10 @@ services:
       - SETGID
     cap_drop:
       - "ALL"
+    command:
+      - duplicati-server
+      - --webservice-interface=any
+      - --webservice-allowed-hostnames=*
     deploy:
       !!merge <<: *common-deploy
       labels:
