@@ -48,7 +48,7 @@ services:
       - /usr/bin/docker:/usr/bin/docker
       - $STORAGE_PATH/core/duplicati/config:/config
       - $STORAGE_PATH:/docker
-      - $BACKUP_PATH:/backup
+      - $BACKUP_PATH:/backups
     tmpfs:
       - /defaults:rw,uid=1000,gid=1000
       - /tmp:rw,uid=1000,gid=1000
