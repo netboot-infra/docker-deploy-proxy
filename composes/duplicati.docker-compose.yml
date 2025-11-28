@@ -24,6 +24,7 @@ services:
       - duplicati-server
       - --webservice-interface=any
       - --webservice-allowed-hostnames=*
+      - --tempdir=/tmp
     deploy:
       !!merge <<: *common-deploy
       labels:
@@ -43,6 +44,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
-      - $STORAGE_PATH/core/duplicati:/config
+      - $STORAGE_PATH/core/duplicati/config:/config
       - $STORAGE_PATH:/docker
       - $BACKUP_PATH:/backup
+    tmpfs:
+      - /defaults:rw,uid=1000,gid=1000
+      - /tmp:rw,uid=1000,gid=1000
