@@ -34,7 +34,6 @@ services:
     image: lscr.io/linuxserver/duplicati:latest
     networks:
       - public
-    read_only: true
     security_opt:
       - no-new-privileges:true
     volumes:
