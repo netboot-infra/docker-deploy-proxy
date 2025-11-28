@@ -1,0 +1,37 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+
+services:
+  plakar:
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Allow traefik to process this container
+        - "traefik.enable=true"
+        - "traefik.swarm.lbswarm=true"
+        - "traefik.http.routers.plakar.rule=Host(`plakar.$DOMAIN_NAME`)"
+        - "traefik.http.routers.plakar.entrypoints=https"
+        - "traefik.http.services.plakar.loadbalancer.server.port=8080"
+        - "traefik.http.routers.plakar.middlewares=auth-admin"
+    environment:
+      !!merge <<: *common-env
+    image: ghcr.io/netboot-infra/plakar:v1.0.5
+    networks:
+      - backend
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    volumes:
+      - $STORAGE_PATH/core/redis:/data
