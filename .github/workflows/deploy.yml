@@ -62,6 +62,8 @@ jobs:
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
           # CrowdSec variables
           CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
+          # Duplicati variables
+          DUPLICATI_ENCRYPTION_KEY: ${{ secrets.DUPLICATI_ENCRYPTION_KEY }}
           # Gluetun variables
           OPENVPN_USER: ${{ secrets.OPENVPN_USER }}
           OPENVPN_PASSWORD: ${{ secrets.OPENVPN_PASSWORD }}
@@ -86,6 +88,8 @@ jobs:
           CF_DNS_API_TOKEN: ${{ secrets.CF_DNS_API_TOKEN }}
           # CrowdSec variables
           CROWDSEC_BOUNCER_KEY_PLUGIN: ${{ secrets.CROWDSEC_BOUNCER_KEY_PLUGIN }}
+          # Duplicati variables
+          DUPLICATI_ENCRYPTION_KEY: ${{ secrets.DUPLICATI_ENCRYPTION_KEY }}
           # Gluetun variables
           OPENVPN_USER: ${{ secrets.OPENVPN_USER }}
           OPENVPN_PASSWORD: ${{ secrets.OPENVPN_PASSWORD }}
