@@ -1,0 +1,43 @@
+x-common-deploy: &common-deploy
+  restart_policy:
+    condition: on-failure
+    delay: 5s
+    window: 120s
+x-common-env: &common-env
+  PGID: 1000
+  PUID: 1000
+  TZ: Europe/Paris
+
+networks:
+  backend: {}
+  public:
+    external: true
+
+services:
+  duplicati:
+    cap_drop:
+      - "ALL"
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Allow traefik to process this container
+        - "traefik.enable=true"
+        - "traefik.http.routers.duplicati.rule=Host(`duplicati.$DOMAIN_NAME`)"
+        - "traefik.http.routers.duplicati.entrypoints=https"
+        - "traefik.http.services.duplicati.loadbalancer.server.port=8200"
+        - "traefik.http.routers.duplicati.middlewares=auth-admin"
+    environment:
+      !!merge <<: *common-env
+    image: lscr.io/linuxserver/duplicati:latest
+    networks:
+      - public
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - $STORAGE_PATH/core/duplicati:/config
+      - $STORAGE_PATH:/docker
+      - $BACKUP_PATH:/backup
