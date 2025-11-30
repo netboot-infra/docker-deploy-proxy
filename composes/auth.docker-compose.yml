@@ -14,6 +14,61 @@ networks:
     external: true
 
 services:
+  auth-default:
+    cap_drop:
+      - "ALL"
+    command:
+      - --client-id=$OAUTH2_PROXY_CLIENT_ID
+      - --client-secret=$OAUTH2_PROXY_CLIENT_SECRET
+      - --cookie-domain=$DOMAIN_NAME
+      - --cookie-expire=168h
+      - --cookie-httponly=true
+      - --cookie-name=oauth_default
+      - --cookie-refresh=10m
+      - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_DEFAULT
+      - --cookie-secure=true
+      - --email-domain=*
+      - --http-address=0.0.0.0:4180
+      - --logging-filename=/dev/stdout
+      - --oidc-issuer-url=https://auth.$DOMAIN_NAME/realms/netboot
+      - --provider=keycloak-oidc
+      - --request-logging=true
+      - --reverse-proxy=true
+      - --scope=openid profile email offline_access
+      - --standard-logging=true
+      - --whitelist-domain=*.$DOMAIN_NAME
+      - --skip-provider-button=true
+      - --upstream=static://202
+      - --proxy-prefix=/oauth2/default
+      - --session-store-type=redis
+      - --redis-connection-url=redis://redis:6379/4
+      - --footer=-
+      - --insecure-oidc-allow-unverified-email=true
+      - --show-debug-on-error=true
+      - --custom-templates-dir=/templates
+    deploy:
+      !!merge <<: *common-deploy
+      labels:
+        # Autoheal 
+        - "autoheal=true"
+        # Traefik
+        - "traefik.enable=true"
+        - "traefik.http.middlewares.auth-default.forwardauth.address=http://auth-default:4180"
+        - "traefik.http.middlewares.auth-default.forwardauth.authResponseHeaders=X-Forwarded-User"
+        - "traefik.http.routers.auth-default.entrypoints=https"
+        - "traefik.http.routers.auth-default.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/default`)"
+        - "traefik.http.services.auth-default.loadbalancer.server.port=4180"
+    environment:
+      !!merge <<: *common-env
+    image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine@sha256:ea02c644f942514e41e8bc78e384efb29cf8a73696c0df8f814ae1f0354f8c51
+    networks:
+      - public
+      - backend
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+
   auth-member:
     cap_drop:
       - "ALL"
@@ -42,7 +97,7 @@ services:
       - --proxy-prefix=/oauth2/member
       - --session-store-type=redis
       - --redis-connection-url=redis://redis:6379/1
-      - --allowed-role=member,manager,admin
+      - --allowed-role=manager
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
       - --show-debug-on-error=true
@@ -57,17 +112,8 @@ services:
         - "traefik.http.middlewares.auth-member.forwardauth.address=http://auth-member:4180"
         - "traefik.http.middlewares.auth-member.forwardauth.authResponseHeaders=X-Forwarded-User"
         - "traefik.http.routers.auth-member.entrypoints=https"
-        - traefik.http.routers.auth-member.middlewares=auth-headers
         - "traefik.http.routers.auth-member.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/member`)"
         - "traefik.http.services.auth-member.loadbalancer.server.port=4180"
-        - "traefik.http.middlewares.auth-headers.headers.frameDeny=true"
-        - "traefik.http.middlewares.auth-headers.headers.stsSeconds=315360000"
-        - "traefik.http.middlewares.auth-headers.headers.stsPreload=true"
-        - "traefik.http.middlewares.auth-headers.headers.sslRedirect=true"
-        - "traefik.http.middlewares.auth-headers.headers.forceSTSHeader=true"
-        - "traefik.http.middlewares.auth-headers.headers.browserXssFilter=true"
-        - "traefik.http.middlewares.auth-headers.headers.contentTypeNosniff=true"
-        - "traefik.http.middlewares.auth-headers.headers.stsIncludeSubdomains=true"
     environment:
       !!merge <<: *common-env
     image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine@sha256:ea02c644f942514e41e8bc78e384efb29cf8a73696c0df8f814ae1f0354f8c51
@@ -107,7 +153,7 @@ services:
       - --proxy-prefix=/oauth2/manager
       - --session-store-type=redis
       - --redis-connection-url=redis://redis:6379/3
-      - --allowed-role=manager,admin
+      - --allowed-role=manager
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
       - --show-debug-on-error=true
@@ -122,17 +168,8 @@ services:
         - "traefik.http.middlewares.auth-manager.forwardauth.address=http://auth-manager:4180"
         - "traefik.http.middlewares.auth-manager.forwardauth.authResponseHeaders=X-Forwarded-User"
         - "traefik.http.routers.auth-manager.entrypoints=https"
-        - traefik.http.routers.auth-manager.middlewares=auth-headers
         - "traefik.http.routers.auth-manager.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/manager`)"
         - "traefik.http.services.auth-manager.loadbalancer.server.port=4180"
-        - "traefik.http.middlewares.auth-headers.headers.frameDeny=true"
-        - "traefik.http.middlewares.auth-headers.headers.stsSeconds=315360000"
-        - "traefik.http.middlewares.auth-headers.headers.stsPreload=true"
-        - "traefik.http.middlewares.auth-headers.headers.sslRedirect=true"
-        - "traefik.http.middlewares.auth-headers.headers.forceSTSHeader=true"
-        - "traefik.http.middlewares.auth-headers.headers.browserXssFilter=true"
-        - "traefik.http.middlewares.auth-headers.headers.contentTypeNosniff=true"
-        - "traefik.http.middlewares.auth-headers.headers.stsIncludeSubdomains=true"
     environment:
       !!merge <<: *common-env
     image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine@sha256:ea02c644f942514e41e8bc78e384efb29cf8a73696c0df8f814ae1f0354f8c51
@@ -187,17 +224,8 @@ services:
         - "traefik.http.middlewares.auth-admin.forwardauth.address=http://auth-admin:4180"
         - "traefik.http.middlewares.auth-admin.forwardauth.authResponseHeaders=X-Forwarded-User"
         - "traefik.http.routers.auth-admin.entrypoints=https"
-        - traefik.http.routers.auth-admin.middlewares=auth-headers
         - "traefik.http.routers.auth-admin.rule=HostRegexp(`^.+$$`) && PathPrefix(`/oauth2/admin`)"
         - "traefik.http.services.auth-admin.loadbalancer.server.port=4180"
-        - "traefik.http.middlewares.auth-headers.headers.frameDeny=true"
-        - "traefik.http.middlewares.auth-headers.headers.stsSeconds=315360000"
-        - "traefik.http.middlewares.auth-headers.headers.stsPreload=true"
-        - "traefik.http.middlewares.auth-headers.headers.sslRedirect=true"
-        - "traefik.http.middlewares.auth-headers.headers.forceSTSHeader=true"
-        - "traefik.http.middlewares.auth-headers.headers.browserXssFilter=true"
-        - "traefik.http.middlewares.auth-headers.headers.contentTypeNosniff=true"
-        - "traefik.http.middlewares.auth-headers.headers.stsIncludeSubdomains=true"
     environment:
       !!merge <<: *common-env
     image: ghcr.io/netboot-infra/oauth2-proxy:v7.13.0-alpine@sha256:ea02c644f942514e41e8bc78e384efb29cf8a73696c0df8f814ae1f0354f8c51
