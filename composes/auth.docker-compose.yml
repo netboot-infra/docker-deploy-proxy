@@ -26,7 +26,7 @@ services:
       - --cookie-name=oauth_default
       - --cookie-refresh=10m
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_DEFAULT
-      - --cookie-secure=true
+      - --cookie-secure=false
       - --email-domain=*
       - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
@@ -81,7 +81,7 @@ services:
       - --cookie-name=oauth_member
       - --cookie-refresh=10m
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_MEMBER
-      - --cookie-secure=true
+      - --cookie-secure=false
       - --email-domain=*
       - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
@@ -137,7 +137,7 @@ services:
       - --cookie-name=oauth_manager
       - --cookie-refresh=10m
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_ADMIN
-      - --cookie-secure=true
+      - --cookie-secure=false
       - --email-domain=*
       - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
@@ -193,7 +193,7 @@ services:
       - --cookie-name=oauth_admin
       - --cookie-refresh=10m
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_ADMIN
-      - --cookie-secure=true
+      - --cookie-secure=false
       - --email-domain=*
       - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
