@@ -27,6 +27,10 @@ services:
       - --cookie-refresh=10m
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_DEFAULT
       - --cookie-secure=false
+      - --set-xauthrequest=true
+      - --pass-access-token=true
+      - --pass-user-headers=true
+      - --pass-authorization-header=true
       - --email-domain=*
       - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
@@ -82,6 +86,10 @@ services:
       - --cookie-refresh=10m
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_MEMBER
       - --cookie-secure=false
+      - --set-xauthrequest=true
+      - --pass-access-token=true
+      - --pass-user-headers=true
+      - --pass-authorization-header=true
       - --email-domain=*
       - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
@@ -138,6 +146,10 @@ services:
       - --cookie-refresh=10m
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_ADMIN
       - --cookie-secure=false
+      - --set-xauthrequest=true
+      - --pass-access-token=true
+      - --pass-user-headers=true
+      - --pass-authorization-header=true
       - --email-domain=*
       - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
@@ -194,6 +206,10 @@ services:
       - --cookie-refresh=10m
       - --cookie-secret=$OAUTH2_PROXY_COOKIE_SECRET_ADMIN
       - --cookie-secure=false
+      - --set-xauthrequest=true
+      - --pass-access-token=true
+      - --pass-user-headers=true
+      - --pass-authorization-header=true
       - --email-domain=*
       - --http-address=0.0.0.0:4180
       - --logging-filename=/dev/stdout
