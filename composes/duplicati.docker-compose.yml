@@ -38,7 +38,7 @@ services:
       !!merge <<: *common-env
       SETTINGS_ENCRYPTION_KEY: $DUPLICATI_ENCRYPTION_KEY
       DUPLICATI__WEBSERVICE_PASSWORD: $SUDO_PASSWORD
-    image: lscr.io/linuxserver/duplicati:latest
+    image: lscr.io/linuxserver/duplicati:latest@sha256:c4585615ae6106cf5046c818f710a081d58b10aefeb79b549b6fc51650abf30b
     networks:
       - public
     security_opt:
