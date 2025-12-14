@@ -105,7 +105,6 @@ services:
       - --proxy-prefix=/oauth2/member
       - --session-store-type=redis
       - --redis-connection-url=redis://redis:6379/1
-      - --allowed-role=manager
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
       - --show-debug-on-error=true
@@ -165,7 +164,7 @@ services:
       - --proxy-prefix=/oauth2/manager
       - --session-store-type=redis
       - --redis-connection-url=redis://redis:6379/3
-      - --allowed-role=manager
+      - --allowed-role=generic-oauth-oauth:generic-manager
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
       - --show-debug-on-error=true
@@ -225,7 +224,7 @@ services:
       - --proxy-prefix=/oauth2/admin
       - --session-store-type=redis
       - --redis-connection-url=redis://redis:6379/2
-      - --allowed-role=admin
+      - --allowed-role=generic-oauth:generic-admin
       - --footer=-
       - --insecure-oidc-allow-unverified-email=true
       - --show-debug-on-error=true
